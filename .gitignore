@@ -1,0 +1,36 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# MacOS
+.DS_Store
+**/*.app/*
+
+# Visual Studio Code
+.vscode
+
+# Fyne
+FyneApp.toml  
+
+# folders
+md/
+
+# credentials
+credentials.json
+
+# my files
+TODO  
+Vorgaben.md
