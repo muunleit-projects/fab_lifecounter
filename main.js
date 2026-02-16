@@ -215,6 +215,11 @@ const requestWakeLock = async () => {
     try {
       wakeLock = await navigator.wakeLock.request("screen");
       console.log("Wake Lock is active");
+
+      wakeLock.addEventListener("release", () => {
+        console.log("Wake Lock has been released");
+        wakeLock = null;
+      });
     } catch (err) {
       console.error(`${err.name}, ${err.message}`);
     }
@@ -223,12 +228,16 @@ const requestWakeLock = async () => {
 
 // Re-request wake lock when page becomes visible again
 document.addEventListener("visibilitychange", async () => {
-  if (wakeLock !== null && document.visibilityState === "visible") {
+  if (wakeLock === null && document.visibilityState === "visible") {
     await requestWakeLock();
   }
 });
 
-// Initial request
+// User gesture to ensure wake lock is granted (some browsers require this)
+document.addEventListener("click", requestWakeLock, { once: true });
+document.addEventListener("touchstart", requestWakeLock, { once: true });
+
+// Initial request attempt
 requestWakeLock();
 
 // Initial Render
