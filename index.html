@@ -15,6 +15,7 @@
   <body>
     <div id="app">
       <div id="player1" class="player-zone">
+        <div class="player-label">Player 1</div>
         <div class="player-content">
           <div class="change-indicator" id="p1-change"></div>
           <div class="life-display">
@@ -71,6 +72,7 @@
         </button>
       </div>
       <div id="player2" class="player-zone">
+        <div class="player-label">Player 2</div>
         <div class="player-content">
           <div class="change-indicator" id="p2-change"></div>
           <div class="life-display">
@@ -103,11 +105,37 @@
             <button class="close-modal">&times;</button>
           </div>
           <div class="settings-group">
-            <label>Starting Life</label>
+            <label>Player 1 Starting Life</label>
             <div class="starting-life-options">
-              <button class="start-life-btn" data-value="20">20</button>
-              <button class="start-life-btn" data-value="40">40</button>
-              <input type="number" id="custom-life" placeholder="Custom" />
+              <button class="start-life-btn" data-player="1" data-value="20">
+                20
+              </button>
+              <button class="start-life-btn" data-player="1" data-value="40">
+                40
+              </button>
+              <input
+                type="number"
+                class="custom-life"
+                data-player="1"
+                placeholder="Custom"
+              />
+            </div>
+          </div>
+          <div class="settings-group" style="margin-top: 2rem">
+            <label>Player 2 Starting Life</label>
+            <div class="starting-life-options">
+              <button class="start-life-btn" data-player="2" data-value="20">
+                20
+              </button>
+              <button class="start-life-btn" data-player="2" data-value="40">
+                40
+              </button>
+              <input
+                type="number"
+                class="custom-life"
+                data-player="2"
+                placeholder="Custom"
+              />
             </div>
           </div>
         </div>

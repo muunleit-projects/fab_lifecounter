@@ -1,8 +1,9 @@
 class GameState {
   constructor() {
+    this.p1StartLife = 20;
+    this.p2StartLife = 20;
     this.p1Life = 20;
     this.p2Life = 20;
-    this.startLife = 20;
     this.history = [];
     this.p1Color = this.randomColor();
     this.p2Color = this.randomColor(this.p1Color);
@@ -18,10 +19,18 @@ class GameState {
 
   randomColor(excludeHue = null) {
     let hue;
+    const minGap = 160; // Larger gap for better distinction
     do {
       hue = Math.floor(Math.random() * 360);
-    } while (excludeHue !== null && Math.abs(hue - excludeHue) < 120);
-    return `hsl(${hue}, 70%, 50%)`;
+    } while (
+      excludeHue !== null &&
+      Math.abs(hue - excludeHue) < minGap &&
+      Math.abs(hue - excludeHue) > 360 - minGap
+    );
+    // Premium vibrant colors: Saturation 80-90%, Lightness 45-55%
+    const s = 85;
+    const l = 50;
+    return `hsl(${hue}, ${s}%, ${l}%)`;
   }
 
   updateLife(player, amount) {
@@ -80,16 +89,17 @@ class GameState {
   }
 
   reset() {
-    this.p1Life = this.startLife;
-    this.p2Life = this.startLife;
+    this.p1Life = this.p1StartLife;
+    this.p2Life = this.p2StartLife;
     this.history = [];
     this.p1Change = 0;
     this.p2Change = 0;
     this.render();
   }
 
-  setStartLife(val) {
-    this.startLife = parseInt(val);
+  setStartLife(player, val) {
+    if (player === 1) this.p1StartLife = parseInt(val);
+    else this.p2StartLife = parseInt(val);
     this.reset();
   }
 
@@ -181,17 +191,45 @@ window.addEventListener("click", (e) => {
 // Settings Logic
 document.querySelectorAll(".start-life-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
+    const player = parseInt(btn.dataset.player);
     document
-      .querySelectorAll(".start-life-btn")
+      .querySelectorAll(`.start-life-btn[data-player="${player}"]`)
       .forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
-    state.setStartLife(btn.dataset.value);
+    state.setStartLife(player, btn.dataset.value);
   });
 });
 
-document.getElementById("custom-life").addEventListener("change", (e) => {
-  state.setStartLife(e.target.value);
+document.querySelectorAll(".custom-life").forEach((input) => {
+  input.addEventListener("change", (e) => {
+    const player = parseInt(input.dataset.player);
+    state.setStartLife(player, e.target.value);
+  });
 });
+
+// Wake Lock API - Prevent screen sleep
+let wakeLock = null;
+
+const requestWakeLock = async () => {
+  if ("wakeLock" in navigator) {
+    try {
+      wakeLock = await navigator.wakeLock.request("screen");
+      console.log("Wake Lock is active");
+    } catch (err) {
+      console.error(`${err.name}, ${err.message}`);
+    }
+  }
+};
+
+// Re-request wake lock when page becomes visible again
+document.addEventListener("visibilitychange", async () => {
+  if (wakeLock !== null && document.visibilityState === "visible") {
+    await requestWakeLock();
+  }
+});
+
+// Initial request
+requestWakeLock();
 
 // Initial Render
 state.render();

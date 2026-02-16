@@ -60,9 +60,21 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   position: relative;
   z-index: 2;
+}
+
+.player-label {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 0.4;
+  z-index: 10;
 }
 
 .life-display {
@@ -72,11 +84,15 @@ body {
 }
 
 .life-value {
-  font-size: clamp(8rem, 25vw, 16rem);
-  font-weight: 900;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  min-width: 1.5em;
+  font-size: clamp(10rem, 35vw, 22rem);
+  font-weight: 950; /* Ultra bold if supported, else falls back to 900 */
+  text-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.5),
+    0 0 50px rgba(0, 0, 0, 0.2);
+  min-width: 1.25em;
   text-align: center;
+  letter-spacing: -0.05em;
+  line-height: 1;
 }
 
 .adjust-btn {
@@ -257,7 +273,7 @@ body {
   border-color: hsl(0, 70%, 50%);
 }
 
-#custom-life {
+.custom-life {
   background: #333;
   border: 1px solid #444;
   color: white;
