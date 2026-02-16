@@ -1,5 +1,11 @@
 const CACHE_NAME = "tcg-lc-v2";
-const STATIC_ASSETS = ["/", "/index.html", "/manifest.json"];
+const STATIC_ASSETS = [
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png",
+];
 
 // Installation: Cache core static assets
 self.addEventListener("install", (event) => {
