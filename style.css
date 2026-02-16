@@ -235,6 +235,28 @@ body {
   border-color: var(--p1-color);
 }
 
+.modal-btn {
+  flex: 1;
+  padding: 1rem;
+  background: #333;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.modal-btn:active {
+  transform: scale(0.98);
+}
+
+.modal-btn.confirm {
+  background: hsl(0, 70%, 40%);
+  border-color: hsl(0, 70%, 50%);
+}
+
 #custom-life {
   background: #333;
   border: 1px solid #444;

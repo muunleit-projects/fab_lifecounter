@@ -10,6 +10,10 @@ class GameState {
     this.p2Change = 0;
     this.changeTimeoutP1 = null;
     this.changeTimeoutP2 = null;
+    this.historyBufferP1 = 0;
+    this.historyBufferP2 = 0;
+    this.historyTimeoutP1 = null;
+    this.historyTimeoutP2 = null;
   }
 
   randomColor(excludeHue = null) {
@@ -24,19 +28,38 @@ class GameState {
     if (player === 1) {
       this.p1Life += amount;
       this.p1Change += amount;
+      this.historyBufferP1 += amount;
       this.showChange(1);
+      this.scheduleHistory(1);
     } else {
       this.p2Life += amount;
       this.p2Change += amount;
+      this.historyBufferP2 += amount;
       this.showChange(2);
+      this.scheduleHistory(2);
     }
-    this.history.push({
-      player,
-      amount,
-      newLife: player === 1 ? this.p1Life : this.p2Life,
-      timestamp: new Date().toLocaleTimeString(),
-    });
     this.render();
+  }
+
+  scheduleHistory(player) {
+    const timeoutKey = `historyTimeoutP${player}`;
+    const bufferKey = `historyBufferP${player}`;
+
+    if (this[timeoutKey]) clearTimeout(this[timeoutKey]);
+
+    this[timeoutKey] = setTimeout(() => {
+      const amount = this[bufferKey];
+      if (amount !== 0) {
+        this.history.push({
+          player,
+          amount,
+          newLife: player === 1 ? this.p1Life : this.p2Life,
+          timestamp: new Date().toLocaleTimeString(),
+        });
+        this[bufferKey] = 0;
+        this.render();
+      }
+    }, 2000);
   }
 
   showChange(player) {
@@ -113,14 +136,13 @@ document.querySelectorAll(".adjust-btn").forEach((btn) => {
   });
 });
 
-document.getElementById("reset-btn").addEventListener("click", () => {
-  if (confirm("Reset game?")) state.reset();
-});
+// Removed browser confirm, now uses custom modal listener below
 
 // Modal Logic
 const modals = {
   history: document.getElementById("history-modal"),
   settings: document.getElementById("settings-modal"),
+  reset: document.getElementById("reset-modal"),
 };
 
 document.getElementById("history-btn").addEventListener("click", () => {
@@ -129,6 +151,19 @@ document.getElementById("history-btn").addEventListener("click", () => {
 
 document.getElementById("settings-btn").addEventListener("click", () => {
   modals.settings.classList.add("active");
+});
+
+document.getElementById("reset-btn").addEventListener("click", () => {
+  modals.reset.classList.add("active");
+});
+
+document.getElementById("confirm-reset").addEventListener("click", () => {
+  state.reset();
+  modals.reset.classList.remove("active");
+});
+
+document.getElementById("cancel-reset").addEventListener("click", () => {
+  modals.reset.classList.remove("active");
 });
 
 document.querySelectorAll(".close-modal").forEach((btn) => {
