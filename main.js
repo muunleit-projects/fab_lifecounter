@@ -20,7 +20,7 @@ class GameState {
     let hue;
     do {
       hue = Math.floor(Math.random() * 360);
-    } while (excludeHue !== null && Math.abs(hue - excludeHue) < 40);
+    } while (excludeHue !== null && Math.abs(hue - excludeHue) < 120);
     return `hsl(${hue}, 70%, 50%)`;
   }
 

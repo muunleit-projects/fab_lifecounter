@@ -72,8 +72,8 @@ body {
 }
 
 .life-value {
-  font-size: clamp(6rem, 20vw, 12rem);
-  font-weight: 800;
+  font-size: clamp(8rem, 25vw, 16rem);
+  font-weight: 900;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   min-width: 1.5em;
   text-align: center;
