@@ -94,7 +94,7 @@ docker run -p 8080:80 fab-lifecounter
 
 ## 📝 License
 
-This project is licensed under the ISC License.
+This project is licensed under the MIT License.
 
 ---
 
