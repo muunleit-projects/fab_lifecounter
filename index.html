@@ -6,14 +6,12 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
-    <title>FAB Life Counter</title>
-    <meta name="description" content="A premium FAB Life Counter PWA" />
-    <link rel="icon" type="image/png" href="icon-192.png" />
-    <link rel="apple-touch-icon" href="icon-192.png" />
-    <link rel="manifest" href="manifest.json" />
+    <title>TCG Life Counter</title>
+    <meta name="description" content="A premium TCG Life Counter PWA" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#000000" />
-    <script type="module" crossorigin src="/fab_lifecounter/assets/index-DKxLjXYq.js"></script>
-    <link rel="stylesheet" crossorigin href="/fab_lifecounter/assets/index-DJWQuLaA.css">
+    <script type="module" crossorigin src="/assets/index-DKxLjXYq.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DJWQuLaA.css">
   </head>
   <body>
     <div id="app">
@@ -164,7 +162,7 @@
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-          navigator.serviceWorker.register("sw.js");
+          navigator.serviceWorker.register("/sw.js");
         });
       }
     </script>
