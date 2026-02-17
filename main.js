@@ -242,13 +242,3 @@ requestWakeLock();
 
 // Initial Render
 state.render();
-
-// Service Worker Registration
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    const swPath = `${import.meta.env.BASE_URL}sw.js`;
-    navigator.serviceWorker.register(swPath).catch((err) => {
-      console.error("Service Worker registration failed:", err);
-    });
-  });
-}

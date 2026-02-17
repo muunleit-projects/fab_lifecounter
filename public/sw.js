@@ -1,4 +1,4 @@
-const CACHE_NAME = "fab-lc-v2";
+const CACHE_NAME = "fab-lc-v1";
 const STATIC_ASSETS = [
   "./",
   "index.html",
