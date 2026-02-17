@@ -6,6 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
+    <!-- viewport-fit=cover: Why: Extends the app into the safe areas of modern mobile screens (notches). -->
     <title>FAB Life Counter</title>
     <meta name="description" content="A premium FAB Life Counter PWA" />
     <link rel="stylesheet" href="/style.css" />
@@ -14,6 +15,7 @@
   </head>
   <body>
     <div id="app">
+      <!-- player-zone: Why: Mirrored layout so players sitting across can both easily read their totals. -->
       <div id="player1" class="player-zone">
         <div class="player-label">Player 1</div>
         <div class="player-content">
@@ -29,6 +31,7 @@
           </div>
         </div>
       </div>
+      <!-- divider: Why: Central hub for global controls (reset, history, settings) accessible to both players. -->
       <div id="divider">
         <button id="reset-btn" title="Reset Game">
           <svg
@@ -159,6 +162,7 @@
       </div>
     </div>
     <script type="module" src="/main.js"></script>
+    <!-- Service Worker Registration: Why: Unlocks PWA capabilities like offline support and 'Add to Home Screen'. -->
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {

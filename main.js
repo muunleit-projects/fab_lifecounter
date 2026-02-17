@@ -1,3 +1,8 @@
+/**
+ * Manages the core game data and UI synchronization.
+ * Why: Centralizing state ensures that history, player colors, and life totals
+ * remain consistent across all UI updates.
+ */
 class GameState {
   constructor() {
     this.p1StartLife = 20;
@@ -17,6 +22,11 @@ class GameState {
     this.historyTimeoutP2 = null;
   }
 
+  /**
+   * Generates distinct, vibrant colors for the player interface.
+   * Why: Visual differentiation is key for players sitting across from each other.
+   * Uses HSL to ensure accessibility through consistent lightness and saturation.
+   */
   randomColor(excludeHue = null) {
     let hue;
     const minGap = 160; // Larger gap for better distinction
@@ -33,6 +43,11 @@ class GameState {
     return `hsl(${hue}, ${s}%, ${l}%)`;
   }
 
+  /**
+   * Primary entry point for life total modifications.
+   * Why: Encapsulates state change, history recording, and visual feedback
+   * in a single atomic operation to prevent state desync.
+   */
   updateLife(player, amount) {
     if (player === 1) {
       this.p1Life += amount;
@@ -50,6 +65,11 @@ class GameState {
     this.render();
   }
 
+  /**
+   * Buffers rapid life changes into single history entries.
+   * Why: Prevents the history log from being cluttered by individual
+   * button presses during a single game event (e.g., taking 5 damage).
+   */
   scheduleHistory(player) {
     const timeoutKey = `historyTimeoutP${player}`;
     const bufferKey = `historyBufferP${player}`;
@@ -71,6 +91,11 @@ class GameState {
     }, 2000);
   }
 
+  /**
+   * Displays the temporary delta for a life point change.
+   * Why: Gives players a clear, readable confirmation of the exact amount
+   * being added or subtracted before it's merged into the total.
+   */
   showChange(player) {
     const indicator = document.getElementById(`p${player}-change`);
     const changeVal = player === 1 ? this.p1Change : this.p2Change;
@@ -103,6 +128,11 @@ class GameState {
     this.reset();
   }
 
+  /**
+   * Synchronizes the DOM with the internal state.
+   * Why: Decouples logic from presentation, allowing the entire UI
+   * to be rebuilt from a single source of truth.
+   */
   render() {
     document.getElementById("p1-life").textContent = this.p1Life;
     document.getElementById("p2-life").textContent = this.p2Life;
@@ -210,6 +240,11 @@ document.querySelectorAll(".custom-life").forEach((input) => {
 // Wake Lock API - Prevent screen sleep
 let wakeLock = null;
 
+/**
+ * Keeps the screen active during gameplay.
+ * Why: Card games can have long periods of inactivity; preventing the
+ * screen from auto-locking ensures the life counter is always visible.
+ */
 const requestWakeLock = async () => {
   if ("wakeLock" in navigator) {
     try {

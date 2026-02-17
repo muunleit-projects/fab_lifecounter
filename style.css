@@ -1,3 +1,5 @@
+/* Global variables: Why: Decouples the design system from specific component 
+   styles, making it easy to swap themes or adjust player colors dynamically. */
 :root {
   --bg-color: #0c0c0c;
   --text-color: #ffffff;
@@ -18,6 +20,8 @@
   user-select: none;
 }
 
+/* Body Layout: Why: Uses 100dvh (dynamic viewport height) to prevent UI 
+   jank on mobile browsers when address bars hide/show. */
 body {
   background: var(--bg-color);
   color: var(--text-color);
@@ -47,9 +51,9 @@ body {
 
 #player1 {
   background: linear-gradient(135deg, var(--p1-color), transparent);
-  transform: rotate(
-    180deg
-  ); /* Player 1 faces the other way for physical play */
+  /* Why: Rotated 180deg so Player 1 can view their life total correctly 
+     from the opposite side of the table/device. */
+  transform: rotate(180deg);
 }
 
 #player2 {
@@ -83,9 +87,11 @@ body {
   gap: 2rem;
 }
 
+/* Life Value: Why: Clamp ensures the numbers are as large as possible 
+   without breaking the layout on small screens like an iPhone SE. */
 .life-value {
   font-size: clamp(10rem, 35vw, 22rem);
-  font-weight: 950; /* Ultra bold if supported, else falls back to 900 */
+  font-weight: 950;
   text-shadow:
     0 4px 30px rgba(0, 0, 0, 0.5),
     0 0 50px rgba(0, 0, 0, 0.2);
@@ -133,6 +139,8 @@ body {
   transform: translateY(-5px);
 }
 
+/* Divider: Why: Acts as a physical and visual anchor in the middle of the 
+   table, housing controls that neither player "owns" exclusively. */
 #divider {
   height: 60px;
   background: rgba(0, 0, 0, 0.8);
