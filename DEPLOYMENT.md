@@ -32,4 +32,4 @@ If you change the icons or the manifest, ensure you update the `CACHE_NAME` in `
 
 ---
 
-**Live URL**: [https://tcg-lifecounter.fly.dev/](https://tcg-lifecounter.fly.dev/)
+**Live URL**: [https://fab-lifecounter.fly.dev/](https://fab-lifecounter.fly.dev/)

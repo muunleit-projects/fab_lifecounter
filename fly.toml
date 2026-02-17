@@ -1,4 +1,4 @@
-app = "tcg-lifecounter"
+app = "fab-lifecounter"
 primary_region = "ams"
 
 [http_service]
