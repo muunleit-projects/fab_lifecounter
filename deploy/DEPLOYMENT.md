@@ -16,12 +16,22 @@ This guide explains how to update and redeploy the FAB Life Counter PWA.
     ```
     Visit `http://localhost:5173` to test your changes.
 3.  **Deploy**:
-    Run the following command in the project root:
+    Trigger a deployment by pushing to the `main` branch:
+
     ```bash
-    fly deploy
+    git push origin main
     ```
+
+    This will trigger the GitHub Action defined in `.github/workflows/deploy.yml`.
+
+    Alternatively, to deploy manually using the CLI (ensure you are logged in):
+
+    ```bash
+    fly deploy --config deploy/fly.toml --dockerfile deploy/Dockerfile
+    ```
+
     This command will:
-    - Build the project using the multi-stage `Dockerfile`.
+    - Build the project using the multi-stage `Dockerfile` in `deploy/`.
     - Containerize the production-ready files.
     - Push the image to Fly.io.
     - Perform a rolling restart of your instances.

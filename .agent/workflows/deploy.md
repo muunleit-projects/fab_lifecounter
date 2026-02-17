@@ -2,7 +2,15 @@
 description: How to redeploy the FAB Life Counter to Fly.io
 ---
 
-To update the live application with your latest changes:
+### Option 1: Automatic Deployment (Recommended)
+
+1. Simply push your changes to the `main` branch. This will trigger the GitHub Action defined in `.github/workflows/deploy.yml`.
+
+```bash
+git push origin main
+```
+
+### Option 2: Manual Deployment
 
 1. Ensure you are logged in to Fly.io:
 
@@ -10,10 +18,10 @@ To update the live application with your latest changes:
 fly auth login
 ```
 
-2. Deploy the current state of the repository:
+2. Deploy using the configuration files in `deploy/`:
 
 ```bash
-fly deploy --now --remote-only
+fly deploy --remote-only --config deploy/fly.toml --dockerfile deploy/Dockerfile
 ```
 
 3. Verify the deployment:
