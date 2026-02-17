@@ -23,6 +23,9 @@ go.work
 # Visual Studio Code
 .vscode
 
+# AI Assistant
+.agent/
+
 # Fyne
 FyneApp.toml  
 
