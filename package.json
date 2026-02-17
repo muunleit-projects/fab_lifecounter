@@ -1,5 +1,5 @@
 {
-  "name": "tcg_lifecounter",
+  "name": "fab_lifecounter",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -15,7 +15,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/muunleit-projects/fab_lifecounter/issues"
   },

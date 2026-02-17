@@ -1,6 +1,6 @@
 # Deploying Updates to Fly.io
 
-This guide explains how to update and redeploy the TCG Life Counter PWA.
+This guide explains how to update and redeploy the FAB Life Counter PWA.
 
 ## Prerequisites
 
@@ -28,8 +28,8 @@ This guide explains how to update and redeploy the TCG Life Counter PWA.
 
 ## PWA Asset Updates
 
-If you change the icons or the manifest, ensure you update the `CACHE_NAME` in `public/sw.js` (e.g., from `tcg-lc-v2` to `tcg-lc-v3`). This forces browsers to download the latest assets immediately.
+If you change the icons or the manifest, ensure you update the `CACHE_NAME` in `public/sw.js` (e.g., from `fab-lc-v1` to `fab-lc-v2`). This forces browsers to download the latest assets immediately.
 
 ---
 
-**Live URL**: [https://tcg-lifecounter.fly.dev/](https://tcg-lifecounter.fly.dev/)
+**Live URL**: [https://fab-lifecounter.fly.dev/](https://fab-lifecounter.fly.dev/)

@@ -1,5 +1,5 @@
 ---
-description: How to redeploy the TCG Life Counter to Fly.io
+description: How to redeploy the FAB Life Counter to Fly.io
 ---
 
 To update the live application with your latest changes:
@@ -22,4 +22,4 @@ fly deploy --now --remote-only
 fly status
 ```
 
-and visit https://tcg-lifecounter.fly.dev/
+and visit https://fab-lifecounter.fly.dev/

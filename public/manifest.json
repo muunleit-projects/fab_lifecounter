@@ -1,7 +1,7 @@
 {
-  "name": "TCG Life Counter",
+  "name": "FAB Life Counter",
   "short_name": "LifeCounter",
-  "description": "Premium TCG Life Counter PWA",
+  "description": "Premium FAB Life Counter PWA",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0c0c0c",
