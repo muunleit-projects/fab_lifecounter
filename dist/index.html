@@ -6,29 +6,17 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
-    <title>FAB Life Counter</title>
-    <meta name="description" content="A premium FAB Life Counter PWA" />
-    <link rel="icon" type="image/png" href="/fab_lifecounter/icon-192.png" />
-    <link rel="apple-touch-icon" href="/fab_lifecounter/icon-192.png" />
-    <link rel="manifest" href="/fab_lifecounter/manifest.json" />
+    <title>TCG Life Counter</title>
+    <meta name="description" content="A premium TCG Life Counter PWA" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#000000" />
-    <script
-      type="module"
-      crossorigin
-      src="/fab_lifecounter/assets/index-DEfStKJW.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      crossorigin
-      href="/fab_lifecounter/assets/index-DJWQuLaA.css"
-    />
+    <script type="module" crossorigin src="/assets/index-Bg3nnfVE.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-0EcVVJJe.css">
   </head>
   <body>
     <div id="app">
       <div id="player1" class="player-zone">
-        <div class="player-label">Player 1</div>
         <div class="player-content">
-          <div class="change-indicator" id="p1-change"></div>
           <div class="life-display">
             <button class="adjust-btn minus" data-player="1" data-amount="-1">
               -
@@ -38,6 +26,7 @@
               +
             </button>
           </div>
+          <div class="change-indicator" id="p1-change"></div>
         </div>
       </div>
       <div id="divider">
@@ -83,7 +72,6 @@
         </button>
       </div>
       <div id="player2" class="player-zone">
-        <div class="player-label">Player 2</div>
         <div class="player-content">
           <div class="change-indicator" id="p2-change"></div>
           <div class="life-display">
@@ -116,37 +104,11 @@
             <button class="close-modal">&times;</button>
           </div>
           <div class="settings-group">
-            <label>Player 1 Starting Life</label>
+            <label>Starting Life</label>
             <div class="starting-life-options">
-              <button class="start-life-btn" data-player="1" data-value="20">
-                20
-              </button>
-              <button class="start-life-btn" data-player="1" data-value="40">
-                40
-              </button>
-              <input
-                type="number"
-                class="custom-life"
-                data-player="1"
-                placeholder="Custom"
-              />
-            </div>
-          </div>
-          <div class="settings-group" style="margin-top: 2rem">
-            <label>Player 2 Starting Life</label>
-            <div class="starting-life-options">
-              <button class="start-life-btn" data-player="2" data-value="20">
-                20
-              </button>
-              <button class="start-life-btn" data-player="2" data-value="40">
-                40
-              </button>
-              <input
-                type="number"
-                class="custom-life"
-                data-player="2"
-                placeholder="Custom"
-              />
+              <button class="start-life-btn" data-value="20">20</button>
+              <button class="start-life-btn" data-value="40">40</button>
+              <input type="number" id="custom-life" placeholder="Custom" />
             </div>
           </div>
         </div>
@@ -169,5 +131,12 @@
         </div>
       </div>
     </div>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js");
+        });
+      }
+    </script>
   </body>
 </html>

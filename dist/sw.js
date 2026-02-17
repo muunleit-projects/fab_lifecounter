@@ -1,23 +1,15 @@
-const CACHE_NAME = "fab-lc-v1";
-const STATIC_ASSETS = [
-  "./",
-  "index.html",
-  "manifest.json",
-  "icon-192.png",
-  "icon-512.png",
-];
+const CACHE_NAME = "tcg-lc-v1";
+const ASSETS = ["/", "/index.html", "/style.css", "/main.js", "/manifest.json"];
 
-// Installation: Cache core static assets
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(STATIC_ASSETS))
+      .then((cache) => cache.addAll(ASSETS))
       .then(() => self.skipWaiting()),
   );
 });
 
-// Activation: Clean up old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -30,34 +22,10 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Fetch: Stale-While-Revalidate for most assets, Cache-First for static
 self.addEventListener("fetch", (event) => {
-  // We use respondWith to correctly handle the request
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Return cached response immediately, but update in background
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse);
-            });
-          }
-        });
-        return cachedResponse;
-      }
-
-      // If not in cache, fetch from network and cache
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200) {
-          return networkResponse;
-        }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-        return networkResponse;
-      });
+  event.waitUntil(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
     }),
   );
 });
