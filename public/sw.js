@@ -1,10 +1,10 @@
 const CACHE_NAME = "fab-lc-v1";
 const STATIC_ASSETS = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "/icon-192.png",
-  "/icon-512.png",
+  "./",
+  "index.html",
+  "manifest.json",
+  "icon-192.png",
+  "icon-512.png",
 ];
 
 // Installation: Cache core static assets
