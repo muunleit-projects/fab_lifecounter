@@ -45,7 +45,7 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
-  transition: background 0.5s ease;
+  /* No background transition: colors are set once at startup, not animated. */
   overflow: hidden;
 }
 
@@ -113,7 +113,8 @@ body {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  backdrop-filter: blur(10px);
+  /* backdrop-filter removed: these 4 buttons are always on screen.
+     The glass-bg rgba tint is enough; blur was invisible but GPU-costly. */
   transition:
     transform 0.1s,
     background 0.3s;
@@ -144,7 +145,9 @@ body {
 #divider {
   height: 60px;
   background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(20px);
+  /* Reduced from blur(20px): the dark background already hides the content
+     behind it — a lighter blur achieves the same look at lower GPU cost. */
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -225,6 +228,10 @@ body {
   justify-content: space-between;
 }
 
+.history-time {
+  opacity: 0.5;
+}
+
 .history-p1 {
   color: var(--p1-color);
 }
@@ -236,6 +243,20 @@ body {
 .settings-group {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+}
+
+.settings-extra {
+  margin-top: 2rem;
+}
+
+.reset-text {
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+.reset-actions {
+  display: flex;
   gap: 1rem;
 }
 
@@ -255,8 +276,9 @@ body {
 }
 
 .start-life-btn.active {
-  background: var(--p1-color);
-  border-color: var(--p1-color);
+  /* Neutral white highlight: works correctly for both Player 1 and Player 2. */
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 .modal-btn {

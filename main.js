@@ -9,20 +9,21 @@ class GameState {
     const p1Hue = Math.floor(Math.random() * circle);
     this.p1Color = `hsl(${p1Hue}, 85%, 50%)`;
     this.p2Color = `hsl(${(p1Hue + circle / 2) % circle}, 85%, 50%)`;
+
     const startLife = 40;
     this.p1StartLife = startLife;
     this.p2StartLife = startLife;
     this.p1Life = startLife;
     this.p2Life = startLife;
+
     this.history = [];
-    this.p1Change = 0;
-    this.p2Change = 0;
-    this.changeTimeoutP1 = null;
-    this.changeTimeoutP2 = null;
-    this.historyBufferP1 = 0;
-    this.historyBufferP2 = 0;
-    this.historyTimeoutP1 = null;
-    this.historyTimeoutP2 = null;
+
+    // Per-player transient state stored as indexed objects to avoid
+    // repetitive if/else branches across methods.
+    this.change = { 1: 0, 2: 0 };
+    this.changeTimeout = { 1: null, 2: null };
+    this.historyBuffer = { 1: 0, 2: 0 };
+    this.historyTimeout = { 1: null, 2: null };
   }
 
   /**
@@ -33,18 +34,16 @@ class GameState {
   updateLife(player, amount) {
     if (player === 1) {
       this.p1Life += amount;
-      this.p1Change += amount;
-      this.historyBufferP1 += amount;
-      this.showChange(1);
-      this.scheduleHistory(1);
     } else {
       this.p2Life += amount;
-      this.p2Change += amount;
-      this.historyBufferP2 += amount;
-      this.showChange(2);
-      this.scheduleHistory(2);
     }
-    this.render();
+
+    this.change[player] += amount;
+    this.historyBuffer[player] += amount;
+
+    this.showChange(player);
+    this.scheduleHistory(player);
+    this.renderLife();
   }
 
   /**
@@ -53,13 +52,10 @@ class GameState {
    * button presses during a single game event (e.g., taking 5 damage).
    */
   scheduleHistory(player) {
-    const timeoutKey = `historyTimeoutP${player}`;
-    const bufferKey = `historyBufferP${player}`;
+    if (this.historyTimeout[player]) clearTimeout(this.historyTimeout[player]);
 
-    if (this[timeoutKey]) clearTimeout(this[timeoutKey]);
-
-    this[timeoutKey] = setTimeout(() => {
-      const amount = this[bufferKey];
+    this.historyTimeout[player] = setTimeout(() => {
+      const amount = this.historyBuffer[player];
       if (amount !== 0) {
         this.history.push({
           player,
@@ -67,8 +63,8 @@ class GameState {
           newLife: player === 1 ? this.p1Life : this.p2Life,
           timestamp: new Date().toLocaleTimeString(),
         });
-        this[bufferKey] = 0;
-        this.render();
+        this.historyBuffer[player] = 0;
+        this.renderHistory();
       }
     }, 2000);
   }
@@ -80,18 +76,16 @@ class GameState {
    */
   showChange(player) {
     const indicator = document.getElementById(`p${player}-change`);
-    const changeVal = player === 1 ? this.p1Change : this.p2Change;
+    const changeVal = this.change[player];
 
     indicator.textContent = (changeVal > 0 ? "+" : "") + changeVal;
     indicator.classList.add("show");
 
-    const timeoutKey = `changeTimeoutP${player}`;
-    if (this[timeoutKey]) clearTimeout(this[timeoutKey]);
+    if (this.changeTimeout[player]) clearTimeout(this.changeTimeout[player]);
 
-    this[timeoutKey] = setTimeout(() => {
+    this.changeTimeout[player] = setTimeout(() => {
       indicator.classList.remove("show");
-      if (player === 1) this.p1Change = 0;
-      else this.p2Change = 0;
+      this.change[player] = 0;
     }, 3000);
   }
 
@@ -99,9 +93,9 @@ class GameState {
     this.p1Life = this.p1StartLife;
     this.p2Life = this.p2StartLife;
     this.history = [];
-    this.p1Change = 0;
-    this.p2Change = 0;
-    this.render();
+    this.change = { 1: 0, 2: 0 };
+    this.renderLife();
+    this.renderHistory();
   }
 
   setStartLife(player, val) {
@@ -111,19 +105,21 @@ class GameState {
   }
 
   /**
-   * Synchronizes the DOM with the internal state.
-   * Why: Decouples logic from presentation, allowing the entire UI
-   * to be rebuilt from a single source of truth.
+   * Updates only the life total DOM nodes.
+   * Why: Separating life and history renders avoids rebuilding the entire
+   * history list on every button press, which is expensive during long-press.
    */
-  render() {
+  renderLife() {
     document.getElementById("p1-life").textContent = this.p1Life;
     document.getElementById("p2-life").textContent = this.p2Life;
+  }
 
-    const root = document.documentElement;
-    root.style.setProperty("--p1-color", this.p1Color);
-    root.style.setProperty("--p2-color", this.p2Color);
-
-    // Update History List
+  /**
+   * Rebuilds the history list DOM from scratch.
+   * Why: Called only when a history entry is actually added or cleared,
+   * not on every life change tick.
+   */
+  renderHistory() {
     const historyList = document.getElementById("history-list");
     historyList.innerHTML = this.history
       .slice()
@@ -134,11 +130,24 @@ class GameState {
                 <span class="history-p${entry.player}">Player ${entry.player}</span>
                 <span>${entry.amount > 0 ? "+" : ""}${entry.amount}</span>
                 <span>${entry.newLife} HP</span>
-                <span style="opacity: 0.5">${entry.timestamp}</span>
+                <span class="history-time">${entry.timestamp}</span>
             </div>
         `,
       )
       .join("");
+  }
+
+  /**
+   * Full initial render, including colors and both sub-renders.
+   * Why: Run once at startup to set CSS custom properties from JS state.
+   * After that, renderLife and renderHistory are called individually.
+   */
+  render() {
+    const root = document.documentElement;
+    root.style.setProperty("--p1-color", this.p1Color);
+    root.style.setProperty("--p2-color", this.p2Color);
+    this.renderLife();
+    this.renderHistory();
   }
 }
 
@@ -156,15 +165,15 @@ document.querySelectorAll(".adjust-btn").forEach((btn) => {
 
   const player = parseInt(btn.dataset.player);
   const amount = parseInt(btn.dataset.amount);
+  const display = document.getElementById(`p${player}-life`);
 
   const applyChange = () => {
     state.updateLife(player, amount);
   };
 
   const popDisplay = () => {
-    const display = document.getElementById(`p${player}-life`);
     display.classList.remove("pop");
-    void display.offsetWidth; // trigger reflow
+    void display.offsetWidth; // trigger reflow to restart animation
     display.classList.add("pop");
   };
 
@@ -176,10 +185,12 @@ document.querySelectorAll(".adjust-btn").forEach((btn) => {
     holdTimeout = setTimeout(() => {
       didLongPress = true;
       applyChange();
+      popDisplay();
 
       const repeat = () => {
         holdInterval = setTimeout(() => {
           applyChange();
+          popDisplay();
           // Accelerate: reduce delay down to a 50ms floor
           currentDelay = Math.max(50, currentDelay - 20);
           repeat();
@@ -202,12 +213,12 @@ document.querySelectorAll(".adjust-btn").forEach((btn) => {
     startHold();
   });
 
-  btn.addEventListener("pointerup", () => stopHold());
-  btn.addEventListener("pointerleave", () => stopHold());
-  btn.addEventListener("pointercancel", () => stopHold());
+  btn.addEventListener("pointerup", stopHold);
+  btn.addEventListener("pointerleave", stopHold);
+  btn.addEventListener("pointercancel", stopHold);
 
   // Single tap: only fire if we didn't already longpress
-  btn.addEventListener("click", (e) => {
+  btn.addEventListener("click", () => {
     if (didLongPress) {
       didLongPress = false;
       return;
@@ -216,8 +227,6 @@ document.querySelectorAll(".adjust-btn").forEach((btn) => {
     popDisplay();
   });
 });
-
-// Removed browser confirm, now uses custom modal listener below
 
 // Modal Logic
 const modals = {
@@ -287,34 +296,24 @@ let wakeLock = null;
  * screen from auto-locking ensures the life counter is always visible.
  */
 const requestWakeLock = async () => {
-  if ("wakeLock" in navigator) {
-    try {
-      wakeLock = await navigator.wakeLock.request("screen");
-      console.log("Wake Lock is active");
-
-      wakeLock.addEventListener("release", () => {
-        console.log("Wake Lock has been released");
-        wakeLock = null;
-      });
-    } catch (err) {
-      console.error(`${err.name}, ${err.message}`);
-    }
+  if (!("wakeLock" in navigator) || wakeLock !== null) return;
+  try {
+    wakeLock = await navigator.wakeLock.request("screen");
+    wakeLock.addEventListener("release", () => {
+      wakeLock = null;
+    });
+  } catch {
+    // Silently fail — wake lock is a best-effort enhancement
   }
 };
 
 // Re-request wake lock when page becomes visible again
-document.addEventListener("visibilitychange", async () => {
-  if (wakeLock === null && document.visibilityState === "visible") {
-    await requestWakeLock();
-  }
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") requestWakeLock();
 });
 
-// User gesture to ensure wake lock is granted (some browsers require this)
-document.addEventListener("click", requestWakeLock, { once: true });
-document.addEventListener("touchstart", requestWakeLock, { once: true });
-
-// Initial request attempt
-requestWakeLock();
-
-// Initial Render
+// Initial Render (sets colors + life totals from state)
 state.render();
+
+// Request wake lock after first user gesture (required by some browsers)
+requestWakeLock();

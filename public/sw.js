@@ -2,6 +2,8 @@ const CACHE_NAME = "fab-lc-v1";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
+  "/style.css",
+  "/main.js",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png",
