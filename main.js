@@ -5,13 +5,15 @@
  */
 class GameState {
   constructor() {
-    const p1Hue = this.randomHue();
+    const circle = 360;
+    const p1Hue = Math.floor(Math.random() * circle);
     this.p1Color = `hsl(${p1Hue}, 85%, 50%)`;
-    this.p2Color = `hsl(${(p1Hue + 180) % 360}, 85%, 50%)`;
-    this.p1StartLife = 20;
-    this.p2StartLife = 20;
-    this.p1Life = 20;
-    this.p2Life = 20;
+    this.p2Color = `hsl(${(p1Hue + circle / 2) % circle}, 85%, 50%)`;
+    const startLife = 40;
+    this.p1StartLife = startLife;
+    this.p2StartLife = startLife;
+    this.p1Life = startLife;
+    this.p2Life = startLife;
     this.history = [];
     this.p1Change = 0;
     this.p2Change = 0;
@@ -21,16 +23,6 @@ class GameState {
     this.historyBufferP2 = 0;
     this.historyTimeoutP1 = null;
     this.historyTimeoutP2 = null;
-  }
-
-  /**
-   * Generates distinct, vibrant colors for the player interface.
-   * Why: Visual differentiation is key for players sitting across from each other.
-   * Player 1 gets a random hue; Player 2 always gets the complementary hue (+180°)
-   * for maximum contrast without any guesswork.
-   */
-  randomHue() {
-    return Math.floor(Math.random() * 360);
   }
 
   /**
@@ -152,17 +144,76 @@ class GameState {
 
 const state = new GameState();
 
-// Event Listeners
+/**
+ * Adds longpress auto-repeat to the +/- buttons.
+ * Why: In card games, large life swings are common. Holding a button is
+ * far more convenient than tapping 10+ times in a row.
+ */
 document.querySelectorAll(".adjust-btn").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    const player = parseInt(btn.dataset.player);
-    const amount = parseInt(btn.dataset.amount);
-    state.updateLife(player, amount);
+  let holdInterval = null;
+  let holdTimeout = null;
+  let didLongPress = false;
 
+  const player = parseInt(btn.dataset.player);
+  const amount = parseInt(btn.dataset.amount);
+
+  const applyChange = () => {
+    state.updateLife(player, amount);
+  };
+
+  const popDisplay = () => {
     const display = document.getElementById(`p${player}-life`);
     display.classList.remove("pop");
     void display.offsetWidth; // trigger reflow
     display.classList.add("pop");
+  };
+
+  const startHold = () => {
+    didLongPress = false;
+    let currentDelay = 200; // ms between repeats (accelerates)
+
+    // After an initial delay, begin repeating
+    holdTimeout = setTimeout(() => {
+      didLongPress = true;
+      applyChange();
+
+      const repeat = () => {
+        holdInterval = setTimeout(() => {
+          applyChange();
+          // Accelerate: reduce delay down to a 50ms floor
+          currentDelay = Math.max(50, currentDelay - 20);
+          repeat();
+        }, currentDelay);
+      };
+      repeat();
+    }, 400); // initial hold delay before repeat kicks in
+  };
+
+  const stopHold = () => {
+    if (holdTimeout) clearTimeout(holdTimeout);
+    if (holdInterval) clearTimeout(holdInterval);
+    holdTimeout = null;
+    holdInterval = null;
+  };
+
+  // Pointer events cover both mouse and touch
+  btn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    startHold();
+  });
+
+  btn.addEventListener("pointerup", () => stopHold());
+  btn.addEventListener("pointerleave", () => stopHold());
+  btn.addEventListener("pointercancel", () => stopHold());
+
+  // Single tap: only fire if we didn't already longpress
+  btn.addEventListener("click", (e) => {
+    if (didLongPress) {
+      didLongPress = false;
+      return;
+    }
+    applyChange();
+    popDisplay();
   });
 });
 
