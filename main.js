@@ -5,13 +5,14 @@
  */
 class GameState {
   constructor() {
+    const p1Hue = this.randomHue();
+    this.p1Color = `hsl(${p1Hue}, 85%, 50%)`;
+    this.p2Color = `hsl(${(p1Hue + 180) % 360}, 85%, 50%)`;
     this.p1StartLife = 20;
     this.p2StartLife = 20;
     this.p1Life = 20;
     this.p2Life = 20;
     this.history = [];
-    this.p1Color = this.randomColor();
-    this.p2Color = this.randomColor(this.p1Color);
     this.p1Change = 0;
     this.p2Change = 0;
     this.changeTimeoutP1 = null;
@@ -25,22 +26,11 @@ class GameState {
   /**
    * Generates distinct, vibrant colors for the player interface.
    * Why: Visual differentiation is key for players sitting across from each other.
-   * Uses HSL to ensure accessibility through consistent lightness and saturation.
+   * Player 1 gets a random hue; Player 2 always gets the complementary hue (+180°)
+   * for maximum contrast without any guesswork.
    */
-  randomColor(excludeHue = null) {
-    let hue;
-    const minGap = 160; // Larger gap for better distinction
-    do {
-      hue = Math.floor(Math.random() * 360);
-    } while (
-      excludeHue !== null &&
-      Math.abs(hue - excludeHue) < minGap &&
-      Math.abs(hue - excludeHue) > 360 - minGap
-    );
-    // Premium vibrant colors: Saturation 80-90%, Lightness 45-55%
-    const s = 85;
-    const l = 50;
-    return `hsl(${hue}, ${s}%, ${l}%)`;
+  randomHue() {
+    return Math.floor(Math.random() * 360);
   }
 
   /**
